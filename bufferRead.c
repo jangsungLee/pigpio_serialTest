@@ -17,8 +17,8 @@ unsigned long time1=0;
 
 int main(void)
 {
-     int isFirstPoint = 0, recvLen = 0;
-     char buf[15];
+     int recvLen = 0;
+     char buf[15], prevChar, newChar;
   printf("%s \n", "Raspberry Startup!");
 
   //setup PIGPIO
@@ -35,19 +35,29 @@ int main(void)
 
   while(1) // sync(fake infinite loop)
   {
+     // Serial Interrupt.
+
+     // read signal
+     serWriteByte(fd, 's');
      if(serDataAvailable (fd)){
-printf("Sync\n");
-              if(serReadByte (fd) == 's')
+              newChar = serReadByte (fd);
+              if(newChar == 's')
+              {
+                       buf[recvLen++] = newChar;
                        break;
+              }
      }
   }
 
 
   while(1)
   {
+     // Serial Interrupt.
+     serWriteByte(fd, 's');
+
      // read signal
      if(serDataAvailable (fd)){
-          recvLen += serRead(fd, &buf[recvLen], 15);
+          buf[recvLen++] = serReadByte(fd);
           if(recvLen == 15)
           {
                recvLen = 0;
