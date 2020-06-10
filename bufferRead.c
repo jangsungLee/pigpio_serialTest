@@ -36,6 +36,7 @@ int main(void)
   while(1) // sync(fake infinite loop)
   {
      if(serDataAvailable (fd)){
+printf("Sync\n");
               if(serReadByte (fd) == 's')
                        break;
      }
